@@ -43,11 +43,20 @@ class Model {
 	//limit
 	protected $limits;
 	//update数组
-	protected $updateArray;
+	protected $updateData;
+	//
+	protected $updateWhere;
 	//fields
 	protected $fieldArray;
 	//field
 	protected $fields
+	//wgeg
+	protected $findData;
+
+	/////////////////////////////
+	protected $map;
+
+
 
 	public function __construct($table){
 		$this->init();
@@ -76,9 +85,14 @@ class Model {
 		$this->getDB();
 		$this->getCache();
 		///////////////////
+		$this->initProperty();
+	}
+	//初始化属性
+	private function initProperty(){
 		$this->fields = '*';
 		$this->wheres = '';
 		$this->orders = '';
+		$this->updateWhere='';
 	}
 
 	//解析fieldArr
@@ -208,33 +222,110 @@ class Model {
 		}
 		return $this;
 	}
+	//查找一条数据
+	public function find(){
+		$sql = $this->getSql();
+		$this->findData = self::$db::getOne($sql);
+		return $this->findData;
+	}
 
-	public function create($arr){
+	public function create($arr,$type='insert',$where=null){
+		//得到数据源
+		if( !isset($arr) && !$arr){
+			$this->createTempData = $_POST;
+		}
+		if( is_array($arr) && 1===itemIsNull($arr) ){
+			$this->createTempData = $arr;
+		}else{
+			return false;
+		}
+		//验证数据源合法性（非数组或者对象会过滤 检查字段映射
+		foreach ($arr as $key => $value) {
+			if( is_array($value)|| is_object($value)){
+				return false;
+			}
+			if( !in_array($key, $this->allFields) || !in_array($this->map[$key],$this->allFields)){
+				return false;
+			}
+			if($key==$this->pkField){
+				$type = 'insert';
+				$arr[$this->pkField]=$value;
+			}
+		}
+		//判断数据状态（新增或者编辑，指定或者自动判断）
+		if(in_array($type,array('insert','update'))){
+			if($type=='insert'){
+				$this->createData = $arr;
+			}else{
+				$this->updateData = $arr;
+				if($where===null)
+					$this->updateWhere = $this->pkField.' = '.$arr[$this->pkField];
+				else
+					$this->updateWhere = $this->where($where)->wheres;
+			}
+		}else{
+			return false;
+		}
+
+		//数据自动验证
+		
+
+
+
+		//表单令牌验证
+		
+
+
+
+		//表单数据赋值（过滤非法字段和字符串处理）
+		
+
+
+
+		//数据自动完成
+		
+
+
+
+		//生成数据对象（保存在内存）
+		
+
+
 
 	}
 
 	public function data($arr){
-
+		
 	}
-
+	//查找多条数据
 	public function select(){
-
+		$sql = $this->getSql();
+		$this->selectData = self::$db::Select();
+		return $this->selectData;
 	}
+	//添加数据到数据库
+	public function add($arr=null){
+		if($arr)
+			return $this->create($arr);
 
-	public function  add(){
-
+		if(1===itemIsNull($this->createData))
+			return self::$db::Update($this->table,$this->createData,$this->updateWhere);
 	}
-
+	//册除数据
 	public function del(){
 
 	}
+	//更新保存数据
+	public function save($arr=null){
+		if($arr)
+			return $this->create($arr);
 
-	public function save(){
-
+		if(1===itemIsNull($this->updateData))
+			return self::$db::Insert($this->table,$this->updateData);
 	}
 	//////////////////////// protected方法 ////////////////////////
 	
-	protected function get_sql()
+	protected function getSql()
 	{
 		$sql = 'select ';
 		$sql .= $this->fields;
