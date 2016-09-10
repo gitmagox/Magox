@@ -26,7 +26,6 @@ class mysql implements iDB{
 
 	//执行sql语句
 	function Query($sql){
-
 		if( !($query = mysql_query($sql)) ){
 			$this->err($sql."<br />".mysql_error());
 		}else{
@@ -90,8 +89,9 @@ class mysql implements iDB{
 			$keyAndarr[] = "`".$key."`='".$value."'";
 		}
 		$keyAndvalue = implode(",",$keyAndarr);
-		$sql = "update ".table." set".$keyAndvalue." where ".$where;
+		$sql = "update ".$table." set".$keyAndvalue." ".$where;
 		$this->query($sql);
+		return mysql_affected_rows();
 	}
 	//过滤
 	function EscapeString($str){
@@ -100,8 +100,9 @@ class mysql implements iDB{
 	//del
 	function Del($table,$where){
 
-		$sql = "delete from ".$table." where ".$where;
+		$sql = "delete from ".$table." ".$where;
 		$this->query($sql);
+		return mysql_affected_rows();
 
 	}
 	//关闭数据库

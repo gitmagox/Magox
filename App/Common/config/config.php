@@ -1,5 +1,5 @@
 <?php 
 
 return $config = [
-	'cache_open' = 1;
+	'cache_open' => 1
 ];

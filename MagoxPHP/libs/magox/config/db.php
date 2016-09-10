@@ -10,4 +10,5 @@ return $db = [
     'DB_PORT'               =>  '3306',     // 端口
     'DB_PREFIX'             =>  'gy_',   // 数据库表前缀
     'DB_CHARSET'             =>  'utf-8',   // 数据库
+    'DB_NAME_PREFIX'         => 'gy_',
 ];

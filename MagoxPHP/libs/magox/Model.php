@@ -3,7 +3,7 @@ namespace Magox;
 
 
 class Model {
-    static private $start
+    static private $start;
 	//数据库集群实例
 	static private  $dbs;
 	//数据库链接实例
@@ -35,7 +35,7 @@ class Model {
 	//order数组
 	protected $orderArray=[];
 	//order
-	protected $orders
+	protected $orders;
 	//selet field
 	protected $selectField = [];
 	//limit数组
@@ -49,10 +49,9 @@ class Model {
 	//fields
 	protected $fieldArray;
 	//field
-	protected $fields
+	protected $fields;
 	//wgeg
 	protected $findData;
-
 	/////////////////////////////
 	protected $map;
 
@@ -63,7 +62,7 @@ class Model {
 		$db_name_prefix = C('DB_NAME_PREFIX','db');
 		if( 0===itemIsNull($db_name_prefix) )
 			exit('数据表前缀不存在，请在DB配置文件中设置:DB_NAME_PREFIX');
-		$this->table =  $db_name_prefix.$table
+		$this->table =  $db_name_prefix.$table.' ';
 
 	}
 	//取注册表
@@ -72,11 +71,11 @@ class Model {
 	}
 	//得到数据连接的资源
 	private function getDB(){
- 		self::$db = $start['db'];
+ 		self::$db = self::$start['db'];
 	}
 	//get缓存连接资源
 	private function getCache(){
-		self::$cache = $start['cache'];
+		self::$cache = self::$start['cache'];
 	}
 	//初始化链接资源
 	private function init(){
@@ -134,7 +133,7 @@ class Model {
 				$value = "'".(string)$value."'";
 				$str = '`'.$key.'`';
 			}
-			$str = $str.' = '. $value);
+			$str = $str.' = '. $value;
 		}
 		$value = $str;
 	}
@@ -146,7 +145,7 @@ class Model {
 		if( 1===itemIsNull($arr) ){
 			if(is_array($arr)){
 				try {
-					array_walk($arr, $this->fieldParser);
+					array_walk($arr, array($this,'fieldParser'));
 				} catch (Exception $e) {
 					exit('字段不合格');	
 				}
@@ -168,12 +167,12 @@ class Model {
 
 		if( 1===itemIsNull($arr) ){
 			if(is_array($arr)){
-				array_walk($arr, $this->whereParser);
+				array_walk($arr, array($this,'whereParser'));
 				$str = join(' AND ',$arr);
 			}else{
 				$str = $arr;
 			}
-			$this->wheres = $str;
+			$this->wheres = "where ".$str;
 		}
 		return $this;
 	}
@@ -225,7 +224,7 @@ class Model {
 	//查找一条数据
 	public function find(){
 		$sql = $this->getSql();
-		$this->findData = self::$db::getOne($sql);
+		$this->findData = self::$db->getOne($sql);
 		return $this->findData;
 	}
 
@@ -239,19 +238,25 @@ class Model {
 		}else{
 			return false;
 		}
+
 		//验证数据源合法性（非数组或者对象会过滤 检查字段映射
-		foreach ($arr as $key => $value) {
+		foreach ($this->createTempData as $key => $value) {
 			if( is_array($value)|| is_object($value)){
 				return false;
 			}
-			if( !in_array($key, $this->allFields) || !in_array($this->map[$key],$this->allFields)){
-				return false;
-			}
-			if($key==$this->pkField){
-				$type = 'insert';
-				$arr[$this->pkField]=$value;
+			//系统开启字段严格检测，在开发中可以开启，稳定后可以关闭提高性能
+			if( C('field_map_check')==1 && itemIsNull($this->allFields) && itemIsNull($this->map)  ){
+				if( !in_array($key, $this->allFields) || !in_array($this->map[$key],$this->allFields)){
+					exit('系统开启了严格字段验证');
+				}
+				if($key==$this->pkField){
+					$type = 'insert';
+					$this->createTempData[$this->pkField]=$value;
+				}
 			}
 		}
+
+		
 		//判断数据状态（新增或者编辑，指定或者自动判断）
 		if(in_array($type,array('insert','update'))){
 			if($type=='insert'){
@@ -290,7 +295,7 @@ class Model {
 		//生成数据对象（保存在内存）
 		
 
-
+		return $this;
 
 	}
 
@@ -300,28 +305,30 @@ class Model {
 	//查找多条数据
 	public function select(){
 		$sql = $this->getSql();
-		$this->selectData = self::$db::Select();
+		$db = self::$db;
+		$this->selectData = $db::Select($sql);
 		return $this->selectData;
 	}
 	//添加数据到数据库
 	public function add($arr=null){
 		if($arr)
-			return $this->create($arr);
-
+			$this->create($arr);
+		$db=self::$db;
 		if(1===itemIsNull($this->createData))
-			return self::$db::Update($this->table,$this->createData,$this->updateWhere);
+			return $db::Insert($this->table,$this->createData);
 	}
 	//册除数据
 	public function del(){
-
+		$db = self::$db;
+		return $db::del($this->table,$this->wheres);
 	}
 	//更新保存数据
 	public function save($arr=null){
 		if($arr)
-			return $this->create($arr);
-
+			$this->create($arr,'update');
+		$db=self::$db;
 		if(1===itemIsNull($this->updateData))
-			return self::$db::Insert($this->table,$this->updateData);
+			return $db::Update($this->table,$this->updateData,$this->wheres);
 	}
 	//////////////////////// protected方法 ////////////////////////
 	

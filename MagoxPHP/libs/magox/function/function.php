@@ -61,3 +61,8 @@ function itemIsNull($arr){
 	}
 	return 1;
 }
+
+
+function M($table){
+	return new \Magox\Model($table);
+}

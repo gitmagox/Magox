@@ -11,7 +11,7 @@ class cache{
 	}
 	static function init($config){
 		$type = 'magox'.ucwords($config['type']);
-		$type = '\\Magox\\cache\\magox'.$type;
+		$type = '\\Magox\\cache\\'.$type;
 		if( itemIsNull(self::$cache)===0 ) 
 			self::$cache = $type::get_instance($config);
 	}
