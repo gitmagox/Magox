@@ -55,15 +55,21 @@ class Model {
 	/////////////////////////////
 	protected $map;
 
+	protected $_auto;
+
+	protected $_validate;
+
 
 
 	public function __construct($table){
-		$this->init();
+		$this->initgo();
 		$db_name_prefix = C('DB_NAME_PREFIX','db');
 		if( 0===itemIsNull($db_name_prefix) )
 			exit('数据表前缀不存在，请在DB配置文件中设置:DB_NAME_PREFIX');
 		$this->table =  $db_name_prefix.$table.' ';
-
+		if( method_exists($this,'init') ){
+			$this->init();
+		}
 	}
 	//取注册表
 	private function getStart(){
@@ -78,7 +84,7 @@ class Model {
 		self::$cache = self::$start['cache'];
 	}
 	//初始化链接资源
-	private function init(){
+	private function initgo(){
 		///////////////////
 		$this->getStart();
 		$this->getDB();
@@ -147,7 +153,7 @@ class Model {
 				try {
 					array_walk($arr, array($this,'fieldParser'));
 				} catch (Exception $e) {
-					exit('字段不合格');	
+					exit('字段不合格:');	
 				}
 				$str = join(',',$arr);
 			}else{

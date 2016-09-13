@@ -2,7 +2,8 @@
 
 namespace Magox;
 use Magox\datebase;
-
+use Magox\view;
+use Magox\request;
 
 
 class start implements \ArrayAccess{
@@ -13,8 +14,18 @@ class start implements \ArrayAccess{
 	static private $db;
 	//视图实例
 	static private $view;
+	//请求实例
+	static private $start;
+
+	static private $request;
 	//缓存配置
 	static private $cache;
+	//当前的模块
+	static private $model;
+	//当前的控制器
+	static private $controller;
+	//当前的方法
+	static private $method;
 	//数据库的配置
 	private $dbConfig    = [];
 	//视图的配置
@@ -38,27 +49,52 @@ class start implements \ArrayAccess{
 		$this->dbConfig['db_charset'] = C('DB_CHARSET','db');
 		$this->dbConfig['db_name']  =  C('DB_NAME','db');
 		$this->dbConfig['db_port'] = C('DB_PORT','db');
+		// p($this->dbConfig);
 		/////////////////////视图的配置/////////////////////////
 		$this->viewConfig['type'] = C('type','view');
 		$this->viewConfig['tpl_dir'] = C('tpl_dir','view');
 		$this->viewConfig['tpl_parser_dir'] = C('tpl_parser_dir','view');
 		$this->viewConfig['tpl_cache_dir'] = C('tpl_cache_dir','view');
+		// p($this->viewConfig);
 		////////////////////缓存的配置/////////////////////////
 		$this->cacheConfig['type'] = C('CACHE_TYPE','cache');
 		$this->cacheConfig['cache_host'] = C('CACHE_HOST','cache');
 		$this->cacheConfig['cache_port'] = C('CACHE_PORT','cache');
 		$this->cacheConfig['cache_save_time'] =C('CACHE_SAVE_TIME','cache');
+		// p($this->cacheConfig);
+		//url模式
+		$this->appUrlModel['url_model'] = C('url_model');
+
+
 	}
 
+	//初始化请求的类型
+	private function initRequest(){
+		self::$request = request::me();
+		return ;
+	}
+
+	//初始化当前的模块
+	private function initModel(){
+		self::$model = self::$request->model;
+		defined('NOW_APP_MODEL') OR define('NOW_APP_MODEL',self::$model);
+		defined('APP_MODEL_PATH') or define('APP_MODEL_PATH',APP_PATH.'Common/');
+		return ;
+	}
 	//初始化控制器
-	
-	//初始化模形名
-	
-	//初始化方法
-	
-	//get参数初始化
-	
-	//post参数初始化
+	private function initController(){
+		self::$controller = self::$request->controller;
+		defined('NOW_APP_CONTROLLER') or define('NOW_APP_CONTROLLER',self::$controller);
+		defined('NOW_CONTROLLER_PATH') or define('NOW_CONTROLLER_PATH',
+			APP_PATH.'/'.self::$model.'/'.'Controller/');
+		return ;
+	}
+	//初始化方法名
+	private function initMethod(){
+		self::$method = self::$request->method;
+		defined('NOW_APP_METHOD') or define('NOW_APP_METHOD',self::$method);
+		return ;
+	}
 	//初始化数据连接
 	private function initDatebase(){
 		if( 1===itemIsNull($this->dbConfig) )
@@ -77,6 +113,7 @@ class start implements \ArrayAccess{
 	private function initView(){
 		if( 1===itemIsNull($this->viewConfig) )
 			self::$view = view::me($this->viewConfig);
+		return self::$view;
 	}
 	//初始化
 	static private function init(){
@@ -87,13 +124,18 @@ class start implements \ArrayAccess{
 		if( 0===itemIsNull(self::$mee) ){
 			self::$mee = new self();
 		}
+		self::$mee->initRequest();
+		self::$mee->initModel();
+		self::$mee->initController();
+		self::$mee->initMethod();
 		self::$mee->initConfig();
 		self::$mee->initDatebase();
 		self::$mee->initCache();
 		self::$mee->initView();
+		innerRun(self::$controller,self::$method);
 	}
 
-	//
+	//唯一的实例
 	static public function me(){
 		if( 0===itemIsNull(self::$mee) ){
 			self::$mee = new self();
@@ -107,12 +149,13 @@ class start implements \ArrayAccess{
 	 */
 	function offsetGet( $key )
 	{
-		if( in_array($key, array('db','view','cache')) ){
+		if( in_array($key, array('db','view','cache','method','model','controller')) ){
 			if( 0===itemIsNull(self::$$key) ){
 				$type= 'init'.ucwords($key);
 				self::$$key = self::$type();
 			}
 			return self::$$key;
+
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 <?php
-define(APP_PATH,__DIR__.'/App/');
+define(APP_NAME,'App');
 
 include 'MagoxPHP/begin.php';
 

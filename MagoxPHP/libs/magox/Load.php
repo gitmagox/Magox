@@ -35,4 +35,8 @@ class Load{
 			include_once ROOT_PATH.$classDir.'.php';
 		}
 	}
+
+	static function implode($file){
+		require_once $file;
+	}
 }

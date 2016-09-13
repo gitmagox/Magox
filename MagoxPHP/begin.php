@@ -5,7 +5,9 @@
 define('P_D_I_R','/../');
 define('MAGOX_PATH',__DIR__.'/');
 define('MAGOX_LIB_PATH',MAGOX_PATH.'libs/magox/');
-defined('APP_PATH')  or define('APP_PATH',dirname($_SERVER['SCRIPT_FILENAME']) .'/App/');
+defined('APP_NAME') or define('APP_NAME','App');
+defined('APP_PATH')  or define('APP_PATH',dirname($_SERVER['SCRIPT_FILENAME']) .'/'.APP_NAME.'/');
+
 defined('ROOT_PATH') or define('ROOT_PATH',APP_PATH.'../');
 
 defined('APP_INCLUDE_PATH')  or define('APP_INCLUDE_PATH',APP_PATH.'Common/');
