@@ -10,21 +10,21 @@
 
 <b>$name:</b>
 
-{$name}
+<?php echo $this->date['name']; ?>
 
 <b>if语名测试</b>
 
-{if $show}
+<?php if($this->date['show']){?>
 	
-{else}
+<?php }else{ ?>
 	
-{/if}
+<?php } ?>
 
 <b>foreache语句测试</b>
 
-{foreach $array(key,value)}
-	{@key}==>{@value}<br>
-{/foreach}
+<?php foreach ($this->date['array'] as $key => $value) { ?>
+	<?php echo $key ?>==><?php echo $value ?><br>
+<?php } ?>
 
 
 </body>

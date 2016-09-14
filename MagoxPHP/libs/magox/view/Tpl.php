@@ -54,8 +54,9 @@ class Tpl implements iview{
 	public function display($_tplfile)
 	{
 		$tplfile = $this->tpl_dir.$_tplfile;
-		$parserfile = $this->tpl_parser_dir.md5($_tplfile).$_tplfile.".php";
-		$cachefile = $this->tpl_cache_dir.md5($_tplfile).$_tplfile.'.html';
+		$parserfile = $this->tpl_parser_dir.md5($_tplfile).".php";
+		$cachefile = $this->tpl_cache_dir.md5($_tplfile).'.html';
+		
 		//开启缓存
 		OB_START==1?ob_start():null;
 		//模板文件是否存在
