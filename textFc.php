@@ -1,5 +1,5 @@
 <?php 
-define(APP_NAME,'App');
+define(M_APP_NAME,'App');
 include 'MagoxPHP/begin.php';
 
 

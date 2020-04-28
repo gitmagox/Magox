@@ -120,7 +120,7 @@ class start implements \ArrayAccess{
 		
 	}
     //框架启动
-	public function run(){
+	static public function run(){
 		if( 0===itemIsNull(self::$mee) ){
 			self::$mee = new self();
 		}

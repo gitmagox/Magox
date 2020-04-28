@@ -6,9 +6,9 @@ return $db = [
     'DB_HOST'               =>  'localhost',     // 服务器地址
     'DB_NAME'               =>  'blog',       // 数据库名
     'DB_USER'               =>  'root',     // 用户名
-    'DB_PWD'                =>  'rootroot',   // 密码
+    'DB_PWD'                =>  '123456',   // 密码
     'DB_PORT'               =>  '3306',     // 端口
     'DB_PREFIX'             =>  '',   // 数据库表前缀
     'DB_CHARSET'             =>  'utf-8',   // 数据库
-    'DB_NAME_PREFIX'         => 'gy_',
+    'DB_NAME_PREFIX'         => 'b_',
 ];

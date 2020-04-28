@@ -29,10 +29,11 @@ class Load{
 	 */
 	static function autoload($class){
 		$classDir = str_replace('\\', '/', $class);
+		var_dump($class);
 		if( 0===strpos($classDir, 'Magox') ){
 			include_once MAGOX_PATH.'libs/'.$classDir.'.php';
 		}else{
-			include_once ROOT_PATH.$classDir.'.php';
+            include_once ROOT_PATH.$classDir.'.php';
 		}
 	}
 

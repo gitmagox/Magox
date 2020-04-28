@@ -116,8 +116,8 @@ class request{
 	}
 	//得到完整的地址
 	private function getUrl(){
-		$host = $server['HTTP_HOST'];
-		$request_url = $server['REQUEST_URI'];
+		$host = $this->server['HTTP_HOST'];
+		$request_url = $this->server['REQUEST_URI'];
 		$this->url = $host.$request_url;
 	}
 	//得到server数组

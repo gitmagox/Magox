@@ -4,9 +4,9 @@
 
 define('P_D_I_R','/../');
 define('MAGOX_PATH',__DIR__.'/');
-define('MAGOX_LIB_PATH',MAGOX_PATH.'libs/magox/');
-defined('APP_NAME') or define('APP_NAME','App');
-defined('APP_PATH')  or define('APP_PATH',dirname($_SERVER['SCRIPT_FILENAME']) .'/'.APP_NAME.'/');
+define('MAGOX_LIB_PATH',MAGOX_PATH.'libs/Magox/');
+defined('M_APP_NAME') or define('M_APP_NAME','App');
+defined('APP_PATH')  or define('APP_PATH',dirname($_SERVER['SCRIPT_FILENAME']) .'/'.M_APP_NAME.'/');
 
 defined('ROOT_PATH') or define('ROOT_PATH',APP_PATH.'../');
 
@@ -18,15 +18,15 @@ defined('APP_FUNCITON_FILE') or define('APP_FUNCITON_FILE',APP_FUNCITON_PATH.'fu
 
 define('MAGOX_LIB_FUNCTION_FILE',MAGOX_LIB_PATH.'function/function.php');
 
-
 //自动加载类
-include MAGOX_LIB_PATH.'load.php';
+include MAGOX_LIB_PATH . 'Load.php';
+
 spl_autoload_register('\\Magox\\Load::autoload');
 
 //加载系统函数
 require_once MAGOX_LIB_FUNCTION_FILE;
 
-
 use Magox\start;
+
 start::run();
 

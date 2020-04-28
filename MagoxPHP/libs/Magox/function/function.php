@@ -76,7 +76,7 @@ function D($modle){
 	$file = APP_MODEL_PATH.$modle.'Model.php';
 	if(is_file($file)){
 		eval('
-			$obj = new\\'.APP_NAME.'\\Common\\Model\\'.$modle.'Model();
+			$obj = new\\'.M_APP_NAME.'\\Common\\Model\\'.$modle.'Model();
 			return $obj;
 		');
 	}
@@ -85,7 +85,7 @@ function D($modle){
 //执行控制器
 function innerRun($name,$method){
 	eval('
-			$obj = new \\'.APP_NAME.'\\'.NOW_APP_MODEL.'\\'.'Controller'.'\\'.NOW_APP_CONTROLLER.'Controller();
+			$obj = new \\'.M_APP_NAME.'\\'.NOW_APP_MODEL.'\\'.'Controller'.'\\'.NOW_APP_CONTROLLER.'Controller();
 			$obj->'.$method.'();
 		');
 }
